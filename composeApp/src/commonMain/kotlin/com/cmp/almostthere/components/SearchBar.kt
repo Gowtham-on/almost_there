@@ -10,8 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -21,20 +19,17 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SearchBar(
+    text: String,
     placeholder: String,
     contentDesc: String,
     showLeadingIcon: Boolean,
     modifier: Modifier = Modifier,
-    value: (String) -> Unit = {}
+    onTextChange: (String) -> Unit = {}
 ) {
-    val searchText = remember { mutableStateOf("") }
 
     TextField(
-        value = searchText.value,
-        onValueChange = {
-            searchText.value = it
-            value(it)
-        },
+        value = text,
+        onValueChange = onTextChange,
         placeholder = {
             Text(
                 placeholder,

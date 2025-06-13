@@ -31,10 +31,16 @@ kotlin {
     }
     
     sourceSets {
+
+        iosMain.dependencies {
+            implementation("io.ktor:ktor-client-darwin:2.3.7")
+        }
         
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation("io.ktor:ktor-client-okhttp:2.3.7")
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -59,7 +65,11 @@ kotlin {
             implementation("co.touchlab:kermit:2.0.0")
             implementation("io.github.dalafiarisamuel:contactpicker:0.1.1")
             implementation("com.mohamedrejeb.calf:calf-permissions:0.8.0")
-
+            implementation("io.ktor:ktor-client-core:2.3.7")
+            implementation("io.ktor:ktor-client-json:2.3.7")
+            implementation("io.ktor:ktor-client-logging:2.3.7")
+            implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
