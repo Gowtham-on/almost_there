@@ -34,10 +34,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import co.touchlab.kermit.Logger
 import com.cmp.almostthere.components.AppHeader
 import com.cmp.almostthere.components.SearchBar
 import com.cmp.almostthere.components.SearchWithSuggestions
-import com.cmp.almostthere.model.NotifyType
 import com.cmp.almostthere.model.TriggerType
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
@@ -78,6 +78,13 @@ fun TriggerForm(navigationController: NavHostController) {
                 contentDesc = "Search",
                 showLeadingIcon = true,
             )
+            Box(modifier = Modifier.clip(RoundedCornerShape(20.dp)).clickable(
+                onClick = {
+                    Logger.d { "inside click" }
+                }
+            )) {
+                GoogleMaps(viewmodel.destinationPlace)
+            }
             Text(
                 "Trigger",
                 style = MaterialTheme.typography.titleLarge,
@@ -112,14 +119,6 @@ fun TriggerForm(navigationController: NavHostController) {
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.surface,
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                GetDeliveryType(viewmodel)
-            }
-            if (viewmodel.selectedContact != null && viewmodel.deliveryMethod != NotifyType.NONE)
-                Text(
-                    "Message will be shared to this number: ${viewmodel.selectedContact?.phoneNumber}",
-                    style = MaterialTheme.typography.labelSmall
-                )
             Button(
                 onClick = { },
                 modifier = Modifier.fillMaxWidth(),
@@ -175,71 +174,6 @@ fun GetTriggerOptions(triggerTypeSelection: (TriggerType) -> Unit = {}) {
                     onClick = {
                         selectedType.value = it.first
                         triggerTypeSelection(it.first)
-                    }
-                )
-                .padding(16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Text(
-                    it.second,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (selectedType.value == it.first)
-                        MaterialTheme.colorScheme.surface
-                    else MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
-                )
-
-                if (selectedType.value == it.first)
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Selected Option",
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.surface
-                    )
-                else
-                    Spacer(
-                        modifier = Modifier.size(18.dp)
-                    )
-            }
-
-        }
-    }
-}
-
-@Composable
-fun GetDeliveryType(viewmodel: TriggerViewmodel) {
-
-    var selectedType = remember { mutableStateOf(NotifyType.NONE) }
-
-    listOf<Pair<NotifyType, String>>(
-        Pair(
-            NotifyType.WHATSAPP,
-            "Whatsapp"
-        ),
-        Pair(
-            NotifyType.SMS,
-            "SMS"
-        ),
-    ).map {
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .border(
-                    border = BorderStroke(
-                        width = 1.5.dp,
-                        color = if (selectedType.value == it.first) MaterialTheme.colorScheme.inverseSurface
-                        else MaterialTheme.colorScheme.inverseSurface.copy(
-                            alpha = 0.3f
-                        )
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .clickable(
-                    onClick = {
-                        selectedType.value = it.first
-                        viewmodel.setUserDeliveryMethod(it.first)
                     }
                 )
                 .padding(16.dp)

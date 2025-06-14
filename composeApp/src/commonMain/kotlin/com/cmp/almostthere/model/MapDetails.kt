@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class MapDetails(
     val placeId: String = "",
     val name: String = "",
-    val lat: Double = -0.0,
-    val lng: Double = -0.0,
+    val lat: Double = -10.0,
+    val lng: Double = -10.0,
     val address: String = "",
 )

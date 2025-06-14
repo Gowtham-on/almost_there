@@ -33,7 +33,7 @@ import com.cmp.almostthere.viewmodel.TriggerViewmodel
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import kotlinx.coroutines.launch
 
-val API_KEY = ""
+val API_KEY = "AIzaSyDY72UzWRsAJy_JG00KI58eJZxck06uM1k"
 
 @Composable
 fun SearchWithSuggestions(

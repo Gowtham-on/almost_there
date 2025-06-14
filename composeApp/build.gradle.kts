@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.cocoapods )
 }
 
 
@@ -29,6 +30,29 @@ kotlin {
             isStatic = true
         }
     }
+
+    cocoapods {
+        summary = "Some description for the Shared Module"
+        homepage = "Link to the Shared Module homepage"
+        version = "1.0"
+        ios.deploymentTarget = "15.4"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+
+        pod("GoogleMaps") {
+            version = libs.versions.pods.google.maps.get()
+            extraOpts += listOf("-compiler-option", "-fmodules")
+        }
+
+        pod("Google-Maps-iOS-Utils") {
+            moduleName = "GoogleMapsUtils"
+            version = libs.versions.pods.google.ios.maps.utils.get()
+            extraOpts += listOf("-compiler-option", "-fmodules")
+        }
+    }
     
     sourceSets {
 
@@ -40,6 +64,10 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation("io.ktor:ktor-client-okhttp:2.3.7")
+
+            implementation(libs.maps.compose)
+            implementation(libs.maps.compose.utils)
+            implementation(libs.play.services.maps)
 
         }
         commonMain.dependencies {

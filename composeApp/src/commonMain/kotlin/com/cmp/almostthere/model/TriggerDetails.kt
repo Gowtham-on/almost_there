@@ -8,11 +8,10 @@ data class TriggerDetails(
     val distance: String,
     val triggerType: TriggerType,
     val message: String,
-    val notifyType: NotifyType
+    var location: MapDetails
 )
 
-
-enum class TriggerType {
+enum class  TriggerType {
     NEAR_DESTINATION,
     CUSTOM_TIME_AWAY,
     NONE
