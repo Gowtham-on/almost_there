@@ -8,7 +8,9 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
-    alias(libs.plugins.cocoapods )
+    alias(libs.plugins.cocoapods)
+    id("com.google.gms.google-services")
+
 }
 
 
@@ -68,6 +70,11 @@ kotlin {
             implementation(libs.maps.compose)
             implementation(libs.maps.compose.utils)
             implementation(libs.play.services.maps)
+
+            implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+            implementation(libs.firebase.database.ktx)
+            implementation(libs.firebase.messaging.ktx)
+            implementation("com.google.firebase:firebase-config:22.1.1")
 
         }
         commonMain.dependencies {

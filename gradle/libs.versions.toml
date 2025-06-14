@@ -15,6 +15,10 @@ playServicesMaps = "19.0.0"
 pods-google-maps = "9.1.1"
 pods-google-ios-maps-utils = "6.0.0"
 
+firebase-bom = "32.8.1"
+firebase-database = "20.3.1"
+firebase-messaging = "23.4.1"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -26,6 +30,9 @@ coil-img = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "mapsCompose" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+
+firebase-database-ktx = { module = "com.google.firebase:firebase-database-ktx", version.ref = "firebase-database" }
+firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

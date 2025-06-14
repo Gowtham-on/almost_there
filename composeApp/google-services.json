@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "80385108216",
+    "firebase_url": "https://almostthere-9a95d-default-rtdb.firebaseio.com",
+    "project_id": "almostthere-9a95d",
+    "storage_bucket": "almostthere-9a95d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80385108216:android:9e1a9e3a39abda4209330d",
+        "android_client_info": {
+          "package_name": "com.cmp.almostthere"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8GtOqva_nmJUSg3HHnO_iZ115T-Iyjd8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
