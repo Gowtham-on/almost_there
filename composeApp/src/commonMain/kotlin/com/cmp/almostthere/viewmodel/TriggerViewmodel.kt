@@ -3,8 +3,8 @@ package com.cmp.almostthere.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import co.touchlab.kermit.Logger
 import com.cmp.almostthere.model.MapDetails
+import com.cmp.almostthere.model.TriggerDetails
 import com.cmp.almostthere.model.TriggerType
 import com.cmp.almostthere.network.FirebaseApiImpl
 import com.cmp.almostthere.network.UserData
@@ -12,6 +12,8 @@ import com.hoc081098.kmp.viewmodel.ViewModel
 import kotlinx.coroutines.launch
 
 class TriggerViewmodel : ViewModel() {
+
+    var userId = ""
 
     var destinationPlace: MapDetails by mutableStateOf(MapDetails())
         private set
@@ -43,9 +45,7 @@ class TriggerViewmodel : ViewModel() {
         viewModelScope.launch {
             val userData = FirebaseApiImpl.loadUserFromId(userId)
 
-            Logger.d { userData?.name.toString() }
             if (userData != null) {
-
                 receiverData = userData
                 showAlertDialog = true
             }
@@ -54,5 +54,16 @@ class TriggerViewmodel : ViewModel() {
 
     fun clearReceiverData() {
         receiverData = UserData()
+    }
+
+    fun getTriggerDetails(): TriggerDetails {
+        val triggerDetails = TriggerDetails(
+            userId = userId,
+            triggerType = triggerType,
+            message = message,
+            location = destinationPlace,
+            receiverDetails = receiverData
+        )
+        return triggerDetails
     }
 }

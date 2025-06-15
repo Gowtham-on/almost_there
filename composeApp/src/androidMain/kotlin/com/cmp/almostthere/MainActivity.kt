@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
+import com.cmp.almostthere.database.setDBContext
 import com.cmp.almostthere.network.FirebaseDatabaseApi
 import com.cmp.almostthere.utils.setContext
 import com.google.firebase.Firebase
@@ -23,6 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Firebase.initialize(this)
         setContext(this)
+        setDBContext(this)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {

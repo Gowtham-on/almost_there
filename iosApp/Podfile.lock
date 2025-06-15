@@ -1,5 +1,7 @@
 PODS:
-  - composeApp (1.0)
+  - composeApp (1.0):
+    - Google-Maps-iOS-Utils (= 6.0.0)
+    - GoogleMaps (= 9.1.1)
   - Firebase/CoreOnly (11.12.0):
     - FirebaseCore (~> 11.12.0)
   - Firebase/Database (11.12.0):
@@ -108,7 +110,7 @@ EXTERNAL SOURCES:
     :path: "../composeApp"
 
 SPEC CHECKSUMS:
-  composeApp: 566a3098fb261e357240ba9987ddeeda065a21e3
+  composeApp: 86b07e976c9d80563e1f68e2f0e4aa802c5de52a
   Firebase: 735108d2d0b67827cd929bfe8254983907c4479f
   FirebaseAppCheckInterop: 73b173e5ec45192e2d522ad43f526a82ad10b852
   FirebaseCore: 9d7a0caf39ec7317fbe13b3c7864c8c2acc60da8

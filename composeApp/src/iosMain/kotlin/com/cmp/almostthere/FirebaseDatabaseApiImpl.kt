@@ -17,10 +17,10 @@ class FirebaseDatabaseApiImpl : FirebaseDatabaseApi {
         db.child(userId).setValue(userMap as Map<Any?, *>)
     }
 
-    override suspend fun getUserData(userId: String): UserData? {
+    override suspend fun getUserDataFromToken(token: String): UserData? {
         val deferred = kotlinx.coroutines.CompletableDeferred<UserData?>()
 
-        db.child(userId).observeSingleEventOfType(
+        db.child("token").child(token).observeSingleEventOfType(
             FIRDataEventType.FIRDataEventTypeValue,
             withBlock = { snapshot ->
                 val value = snapshot.value as? Map<*, *>
@@ -33,6 +33,24 @@ class FirebaseDatabaseApiImpl : FirebaseDatabaseApi {
         )
         return deferred.await()
     }
+
+    override suspend fun getUserDataFromId(userId: String): UserData? {
+        val deferred = kotlinx.coroutines.CompletableDeferred<UserData?>()
+
+        db.child("id").child(userId).observeSingleEventOfType(
+            FIRDataEventType.FIRDataEventTypeValue,
+            withBlock = { snapshot ->
+                val value = snapshot.value as? Map<*, *>
+                val name = value?.get("name") as? String
+                val deviceId = value?.get("deviceId") as? String
+                deferred.complete(
+                    if (name != null && deviceId != null) UserData(name, deviceId) else null
+                )
+            }
+        )
+        return deferred.await()
+    }
+
 
     override suspend fun mapUserIdWithToken(userId: String, token: String) {
         db.child(userId).setValue(token)

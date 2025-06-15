@@ -1,5 +1,7 @@
 package com.cmp.almostthere.network
 
+import kotlinx.serialization.Serializable
+
 interface FirebaseDatabaseApi {
     suspend fun setUserData(userId: String, name: String, deviceId: String)
     suspend fun getUserDataFromToken(token: String): UserData?
@@ -8,6 +10,7 @@ interface FirebaseDatabaseApi {
     suspend fun getDeviceIdFromId(userId: String): String?
 }
 
+@Serializable
 data class UserData(
     val name: String = "",
     val userId: String = "",

@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.cocoapods)
     id("com.google.gms.google-services")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 
 }
 
@@ -75,6 +77,8 @@ kotlin {
             implementation(libs.firebase.database.ktx)
             implementation(libs.firebase.messaging.ktx)
             implementation("com.google.firebase:firebase-config:22.1.1")
+            implementation(libs.kotlinx.serialization.json)
+
 
         }
         commonMain.dependencies {
@@ -105,6 +109,9 @@ kotlin {
             implementation("io.ktor:ktor-client-logging:2.3.7")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+
+            implementation(libs.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -139,7 +146,12 @@ android {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 dependencies {
     debugImplementation(compose.uiTooling)
+    ksp(libs.room.compiler)
 }
 

@@ -26,8 +26,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,16 +39,25 @@ import androidx.navigation.NavHostController
 import com.cmp.almostthere.components.AppHeader
 import com.cmp.almostthere.components.SearchBar
 import com.cmp.almostthere.components.SearchWithSuggestions
+import com.cmp.almostthere.database.getTriggerDao
 import com.cmp.almostthere.model.TriggerType
 import com.cmp.almostthere.utils.ShowAlertDialog
+import com.cmp.almostthere.utils.getUserId
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun TriggerForm(navigationController: NavHostController) {
     var messageText = remember { mutableStateOf("") }
 
     val viewmodel = koinKmpViewModel<TriggerViewmodel>()
+    val dao = getTriggerDao()
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewmodel.userId = getUserId() ?: ""
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -87,7 +98,9 @@ fun TriggerForm(navigationController: NavHostController) {
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.surface,
             )
-            GetTriggerOptions {}
+            GetTriggerOptions {
+                viewmodel.setUserTriggerType(it)
+            }
             Spacer(
                 modifier = Modifier.height(10.dp)
             )
@@ -112,7 +125,13 @@ fun TriggerForm(navigationController: NavHostController) {
                 messageText.value = message
             }
             Button(
-                onClick = { },
+                onClick = {
+                    viewmodel.setUserMessage(messageText.value)
+                    val triggerDetails = viewmodel.getTriggerDetails()
+                    scope.launch {
+                        dao.insertTriggerDetails(triggerDetails)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
