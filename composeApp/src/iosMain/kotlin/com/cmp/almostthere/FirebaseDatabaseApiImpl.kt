@@ -33,4 +33,12 @@ class FirebaseDatabaseApiImpl : FirebaseDatabaseApi {
         )
         return deferred.await()
     }
+
+    override suspend fun mapUserIdWithToken(userId: String, token: String) {
+        db.child(userId).setValue(token)
+    }
+
+    override suspend fun getDeviceIdFromId(userId: String): String? {
+        return ""
+    }
 }

@@ -5,6 +5,7 @@ import almostthere.composeapp.generated.resources.magnifier_glass
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 
@@ -24,6 +26,7 @@ fun SearchBar(
     contentDesc: String,
     showLeadingIcon: Boolean,
     modifier: Modifier = Modifier,
+    keyBoardType: KeyboardType = KeyboardType.Text,
     onTextChange: (String) -> Unit = {}
 ) {
 
@@ -37,6 +40,7 @@ fun SearchBar(
                 color = MaterialTheme.colorScheme.tertiary,
             )
         },
+        keyboardOptions = KeyboardOptions(keyboardType = keyBoardType),
         leadingIcon = if (showLeadingIcon) {
             {
                 Image(

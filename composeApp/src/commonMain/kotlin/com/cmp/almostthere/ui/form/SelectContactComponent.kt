@@ -1,26 +1,28 @@
 package com.cmp.almostthere.ui.form
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.cmp.almostthere.components.SearchBar
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
-import com.devtamuno.kmp.contactpicker.rememberContactPickerState
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import com.mohamedrejeb.calf.permissions.ExperimentalPermissionsApi
-import com.mohamedrejeb.calf.permissions.Permission
-import com.mohamedrejeb.calf.permissions.isGranted
-import com.mohamedrejeb.calf.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -28,40 +30,45 @@ fun SelectContactComponent() {
 
     val viewmodel = koinKmpViewModel<TriggerViewmodel>()
 
-    val contactPermission = rememberPermissionState(
-        Permission.ReadContacts
-    )
-
-    val contactPicker = rememberContactPickerState {
-        if (it != null) {
-            viewmodel.setContact(it)
-        }
-    }
-    val contactName = viewmodel.selectedContact?.name ?: "Select a contact"
+    var contactId = remember { mutableStateOf("") }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                if (contactPermission.status.isGranted) {
-                    contactPicker.launchContactPicker()
-                } else {
-                    contactPermission.launchPermissionRequest()
-                }
-            }
             .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = contactName,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.surface,
+        SearchBar(
+            text = contactId.value,
+            placeholder = "Enter the receiver's id",
+            contentDesc = "Enter",
+            showLeadingIcon = false,
+            modifier = Modifier.weight(2f),
+            keyBoardType = KeyboardType.Number
+        ) {
+            contactId.value = it
+        }
+        Spacer(
+            Modifier.width(15.dp)
         )
-        Icon(
-            imageVector = Icons.Default.ChevronRight,
-            contentDescription = "Select Contact",
-            tint = MaterialTheme.colorScheme.surface
+        Button(
+            onClick = {
+                viewmodel.searchUser(contactId.value)
+            },
+            content = {
+                Text(
+                    "Search",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.surface
+                )
+            },
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.inverseSurface,
+            ),
+            contentPadding = PaddingValues(vertical = 15.dp),
         )
     }
 }

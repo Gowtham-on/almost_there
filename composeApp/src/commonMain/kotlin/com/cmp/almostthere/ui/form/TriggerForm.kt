@@ -34,11 +34,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import co.touchlab.kermit.Logger
 import com.cmp.almostthere.components.AppHeader
 import com.cmp.almostthere.components.SearchBar
 import com.cmp.almostthere.components.SearchWithSuggestions
 import com.cmp.almostthere.model.TriggerType
+import com.cmp.almostthere.utils.ShowAlertDialog
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
 import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 
@@ -78,11 +78,8 @@ fun TriggerForm(navigationController: NavHostController) {
                 contentDesc = "Search",
                 showLeadingIcon = true,
             )
-            Box(modifier = Modifier.clip(RoundedCornerShape(20.dp)).clickable(
-                onClick = {
-                    Logger.d { "inside click" }
-                }
-            )) {
+            Box(
+                modifier = Modifier.clip(RoundedCornerShape(20.dp))) {
                 GoogleMaps(viewmodel.destinationPlace)
             }
             Text(
@@ -114,11 +111,6 @@ fun TriggerForm(navigationController: NavHostController) {
             ) { message ->
                 messageText.value = message
             }
-            Text(
-                "Delivery Method",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.surface,
-            )
             Button(
                 onClick = { },
                 modifier = Modifier.fillMaxWidth(),
@@ -137,6 +129,20 @@ fun TriggerForm(navigationController: NavHostController) {
                 },
             )
             Spacer(modifier = Modifier.height(15.dp))
+            ShowAlertDialog(
+                show = viewmodel.showAlertDialog,
+                title = "Receiver Details",
+                message = "Please confirm the receiver details ${viewmodel.receiverData.userId}",
+                confirmButtonText = "Confirm",
+                dismissButtonText = "Cancel",
+                onDismiss = {
+                    viewmodel.showAlertDialog = false
+                    viewmodel.clearReceiverData()
+                },
+                onConfirm = {
+                    viewmodel.showAlertDialog = false
+                }
+            )
         }
     }
 

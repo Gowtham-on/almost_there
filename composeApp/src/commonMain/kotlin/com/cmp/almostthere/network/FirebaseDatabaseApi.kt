@@ -2,23 +2,33 @@ package com.cmp.almostthere.network
 
 interface FirebaseDatabaseApi {
     suspend fun setUserData(userId: String, name: String, deviceId: String)
-    suspend fun getUserData(userId: String): UserData?
+    suspend fun getUserDataFromToken(token: String): UserData?
+    suspend fun getUserDataFromId(userId: String): UserData?
+    suspend fun mapUserIdWithToken(userId: String, token: String)
+    suspend fun getDeviceIdFromId(userId: String): String?
 }
 
 data class UserData(
-    val name: String,
-    val deviceId: String
+    val name: String = "",
+    val userId: String = "",
+    val token: String = ""
 )
 
 
-val firebaseApi = getFirebaseDatabaseApi()
+object FirebaseApiImpl {
+    val firebaseApi = getFirebaseDatabaseApi()
 
-suspend fun saveUser(userId: String, name: String, deviceId: String) {
-    firebaseApi.setUserData(userId, name, deviceId)
-}
+    suspend fun saveUser(userId: String, name: String, deviceId: String) {
+        firebaseApi.setUserData(userId, name, deviceId)
+    }
 
-suspend fun loadUser(userId: String): UserData? {
-    return firebaseApi.getUserData(userId)
+    suspend fun loadUserFromToken(token: String): UserData? {
+        return firebaseApi.getUserDataFromToken(token)
+    }
+    suspend fun loadUserFromId(userId: String): UserData? {
+        return firebaseApi.getUserDataFromId(userId)
+    }
+
 }
 
 expect fun getFirebaseDatabaseApi(): FirebaseDatabaseApi
