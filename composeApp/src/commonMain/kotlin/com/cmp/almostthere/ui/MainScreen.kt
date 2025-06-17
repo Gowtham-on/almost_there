@@ -14,9 +14,10 @@ import androidx.navigation.compose.rememberNavController
 import com.cmp.almostthere.components.BottomNavigationBar
 import com.cmp.almostthere.navigation.BottomNavigationItem
 import com.cmp.almostthere.navigation.BottomNavigationNavGraph
+import com.cmp.almostthere.viewmodel.TriggerViewmodel
 
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(navController: NavHostController, viewmodel: TriggerViewmodel) {
     val navigationItems = remember {
         listOf(
             BottomNavigationItem.Home,
@@ -32,13 +33,16 @@ fun MainScreen(navController: NavHostController) {
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(bottom = it.calculateBottomPadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = it.calculateBottomPadding(),
                 start = it.calculateStartPadding(LayoutDirection.Ltr),
                 end = it.calculateStartPadding(LayoutDirection.Ltr)
             ),
         ) {
             BottomNavigationNavGraph(
                 navController = navController,
+                viewmodel = viewmodel
             )
         }
     }

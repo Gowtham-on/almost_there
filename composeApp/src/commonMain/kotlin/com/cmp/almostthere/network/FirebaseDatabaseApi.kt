@@ -6,7 +6,7 @@ interface FirebaseDatabaseApi {
     suspend fun setUserData(userId: String, name: String, deviceId: String)
     suspend fun getUserDataFromToken(token: String): UserData?
     suspend fun getUserDataFromId(userId: String): UserData?
-    suspend fun mapUserIdWithToken(userId: String, token: String)
+    suspend fun mapUserIdWithToken(userId: String, token: String, name: String)
     suspend fun getDeviceIdFromId(userId: String): String?
 }
 
@@ -23,6 +23,11 @@ object FirebaseApiImpl {
 
     suspend fun saveUser(userId: String, name: String, deviceId: String) {
         firebaseApi.setUserData(userId, name, deviceId)
+    }
+
+    suspend fun updateUser(userId: String, token: String, name: String) {
+        firebaseApi.setUserData(userId, name = name, token)
+        firebaseApi.mapUserIdWithToken(userId, token, name)
     }
 
     suspend fun loadUserFromToken(token: String): UserData? {

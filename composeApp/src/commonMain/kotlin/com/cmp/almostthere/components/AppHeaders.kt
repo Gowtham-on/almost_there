@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
@@ -31,7 +34,7 @@ fun AppHeader(
     onLeftIconClick: () -> Unit = {},
     onRightIconClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    leftIcon: DrawableResource? = null,
+    leftIcon: ImageVector? = null,
     rightIcon: DrawableResource? = null,
 ) {
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -46,7 +49,7 @@ fun AppHeader(
             if (showLeftIcon)
                 Image(
                     alignment = Alignment.CenterStart,
-                    painter = painterResource(leftIcon ?: Res.drawable.add_icon),
+                    imageVector = leftIcon ?: Icons.Default.ChevronLeft,
                     contentDescription = "add_icon",
                     modifier = Modifier
                         .clickable(

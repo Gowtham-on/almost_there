@@ -13,6 +13,13 @@ import kotlinx.coroutines.launch
 
 class TriggerViewmodel : ViewModel() {
 
+    var currentUserData: UserData by mutableStateOf(UserData())
+        private set
+
+    fun setCurrentUserInfoData(userData: UserData) {
+        currentUserData = userData
+    }
+
     var userId = ""
 
     var destinationPlace: MapDetails by mutableStateOf(MapDetails())
@@ -24,6 +31,9 @@ class TriggerViewmodel : ViewModel() {
     var receiverData: UserData by mutableStateOf(UserData())
         private set
 
+    var showAlertDialog: Boolean by mutableStateOf(false)
+    var showIncorrectId: Boolean by mutableStateOf(false)
+
     fun setUserDestination(place: MapDetails) {
         destinationPlace = place
     }
@@ -32,28 +42,36 @@ class TriggerViewmodel : ViewModel() {
         triggerType = type
     }
 
-
     fun setUserMessage(message: String) {
         this.message = message
     }
 
-
-    var showAlertDialog: Boolean by mutableStateOf(false)
-
-
     fun searchUser(userId: String) {
         viewModelScope.launch {
             val userData = FirebaseApiImpl.loadUserFromId(userId)
-
             if (userData != null) {
                 receiverData = userData
                 showAlertDialog = true
+                showIncorrectId = false
+                setDialogTexts(
+                    "Receiver Details",
+                    "Username: ${receiverData.name}\nId: ${receiverData.userId}"
+                )
+            } else {
+                showIncorrectId = true
             }
         }
     }
 
     fun clearReceiverData() {
         receiverData = UserData()
+    }
+
+
+    fun updateName(name: String) {
+        viewModelScope.launch {
+            FirebaseApiImpl.updateUser(currentUserData.userId, currentUserData.token, name)
+        }
     }
 
     fun getTriggerDetails(): TriggerDetails {
@@ -65,5 +83,27 @@ class TriggerViewmodel : ViewModel() {
             receiverDetails = receiverData
         )
         return triggerDetails
+    }
+
+    // Alert dialog texts
+    var alertDialogTitle: String by mutableStateOf("")
+        private set
+    var alertDialogDescription: String by mutableStateOf("")
+        private set
+    var confirmButtonText: String by mutableStateOf("Confirm")
+        private set
+    var dismissButtonText: String by mutableStateOf("Cancel")
+        private set
+
+    fun setDialogTexts(
+        title: String,
+        description: String,
+        confirm: String = "Confirm",
+        dismiss: String = "Cancel"
+    ) {
+        alertDialogTitle = title
+        alertDialogDescription = description
+        confirmButtonText = confirm
+        dismissButtonText = dismiss
     }
 }

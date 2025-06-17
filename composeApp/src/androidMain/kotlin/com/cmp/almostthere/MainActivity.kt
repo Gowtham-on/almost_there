@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                         firebaseDbApi.setUserData(
                             userId = uniqueId,
                             deviceId = token,
-                            name = ""
+                            name = "User_${uniqueId}"
                         )
                     } else {
                         saveUserSession(
@@ -73,7 +73,7 @@ suspend fun generateUniqueUserId(firebaseDbApi: FirebaseDatabaseApi, token: Stri
         val randomId = generateRandomCode()
         val existing = firebaseDbApi.getDeviceIdFromId(randomId)
         if (existing == null) {
-            firebaseDbApi.mapUserIdWithToken(randomId, token)
+            firebaseDbApi.mapUserIdWithToken(randomId, token, "User_${randomId}")
             return randomId
         }
     }

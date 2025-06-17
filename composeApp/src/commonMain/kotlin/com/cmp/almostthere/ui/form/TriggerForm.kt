@@ -1,7 +1,5 @@
 package com.cmp.almostthere.ui.form
 
-import almostthere.composeapp.generated.resources.Res
-import almostthere.composeapp.generated.resources.cross
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -44,14 +43,12 @@ import com.cmp.almostthere.model.TriggerType
 import com.cmp.almostthere.utils.ShowAlertDialog
 import com.cmp.almostthere.utils.getUserId
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
-import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun TriggerForm(navigationController: NavHostController) {
+fun TriggerForm(navigationController: NavHostController, viewmodel: TriggerViewmodel) {
     var messageText = remember { mutableStateOf("") }
 
-    val viewmodel = koinKmpViewModel<TriggerViewmodel>()
     val dao = getTriggerDao()
     val scope = rememberCoroutineScope()
 
@@ -71,7 +68,7 @@ fun TriggerForm(navigationController: NavHostController) {
             onLeftIconClick = {
                 navigationController.popBackStack()
             },
-            leftIcon = Res.drawable.cross,
+            leftIcon = Icons.Default.Close,
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -88,9 +85,11 @@ fun TriggerForm(navigationController: NavHostController) {
                 placeholder = "Search for a destination",
                 contentDesc = "Search",
                 showLeadingIcon = true,
+                viewmodel = viewmodel
             )
             Box(
-                modifier = Modifier.clip(RoundedCornerShape(20.dp))) {
+                modifier = Modifier.clip(RoundedCornerShape(20.dp))
+            ) {
                 GoogleMaps(viewmodel.destinationPlace)
             }
             Text(
@@ -109,7 +108,7 @@ fun TriggerForm(navigationController: NavHostController) {
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.surface,
             )
-            SelectContactComponent()
+            SelectContactComponent(viewmodel)
             Text(
                 "Message",
                 style = MaterialTheme.typography.titleLarge,
@@ -126,11 +125,26 @@ fun TriggerForm(navigationController: NavHostController) {
             }
             Button(
                 onClick = {
-                    viewmodel.setUserMessage(messageText.value)
-                    val triggerDetails = viewmodel.getTriggerDetails()
-                    scope.launch {
-                        dao.insertTriggerDetails(triggerDetails)
+                    if (viewmodel.destinationPlace.placeId.isNotEmpty() &&
+                        viewmodel.triggerType != TriggerType.NONE &&
+                        viewmodel.receiverData.userId.isNotEmpty() &&
+                        viewmodel.message.isNotEmpty()
+                    ) {
+                        viewmodel.setUserMessage(messageText.value)
+                        val triggerDetails = viewmodel.getTriggerDetails()
+                        scope.launch {
+                            dao.insertTriggerDetails(triggerDetails)
+                            navigationController.popBackStack()
+                        }
+                    } else {
+                        viewmodel.setDialogTexts(
+                            "Enter all fields",
+                            "Some of the fields are not filled. Please fill all the fields",
+                            confirm = "Ok"
+                        )
+                        viewmodel.showAlertDialog = true
                     }
+
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -148,20 +162,22 @@ fun TriggerForm(navigationController: NavHostController) {
                 },
             )
             Spacer(modifier = Modifier.height(15.dp))
-            ShowAlertDialog(
-                show = viewmodel.showAlertDialog,
-                title = "Receiver Details",
-                message = "Please confirm the receiver details ${viewmodel.receiverData.userId}",
-                confirmButtonText = "Confirm",
-                dismissButtonText = "Cancel",
-                onDismiss = {
-                    viewmodel.showAlertDialog = false
-                    viewmodel.clearReceiverData()
-                },
-                onConfirm = {
-                    viewmodel.showAlertDialog = false
-                }
-            )
+
+            if (viewmodel.showAlertDialog)
+                ShowAlertDialog(
+                    show = true,
+                    title = viewmodel.alertDialogTitle,
+                    message = viewmodel.alertDialogDescription,
+                    confirmButtonText = viewmodel.confirmButtonText,
+                    dismissButtonText = viewmodel.dismissButtonText,
+                    onDismiss = {
+                        viewmodel.showAlertDialog = false
+                        viewmodel.clearReceiverData()
+                    },
+                    onConfirm = {
+                        viewmodel.showAlertDialog = false
+                    }
+                )
         }
     }
 

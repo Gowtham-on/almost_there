@@ -30,7 +30,6 @@ import com.cmp.almostthere.model.MapDetails
 import com.cmp.almostthere.network.searchPlaces
 import com.cmp.almostthere.utils.Debouncer
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
-import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import kotlinx.coroutines.launch
 
 val API_KEY = "AIzaSyDY72UzWRsAJy_JG00KI58eJZxck06uM1k"
@@ -40,6 +39,7 @@ fun SearchWithSuggestions(
     placeholder: String,
     contentDesc: String,
     showLeadingIcon: Boolean,
+    viewmodel: TriggerViewmodel
 ) {
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
     var showSuggestions by remember { mutableStateOf(false) }
@@ -48,7 +48,6 @@ fun SearchWithSuggestions(
     var places by remember { mutableStateOf<List<MapDetails>>(emptyList()) }
     val focusRequester = remember { FocusRequester() }
 
-    val viewmodel = koinKmpViewModel<TriggerViewmodel>()
 
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {

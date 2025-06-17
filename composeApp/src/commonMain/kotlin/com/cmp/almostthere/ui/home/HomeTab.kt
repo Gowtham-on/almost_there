@@ -4,7 +4,6 @@ import almostthere.composeapp.generated.resources.Res
 import almostthere.composeapp.generated.resources.add_icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,30 +24,38 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.cmp.almostthere.components.AppHeader
+import com.cmp.almostthere.components.ToggleSwitch
+import com.cmp.almostthere.database.TriggerDetailsDao
 import com.cmp.almostthere.database.getTriggerDao
 import com.cmp.almostthere.model.TriggerDetails
 import com.cmp.almostthere.navigation.Routes
+import com.cmp.almostthere.network.FirebaseApiImpl
 import com.cmp.almostthere.utils.getUserId
+import com.cmp.almostthere.viewmodel.TriggerViewmodel
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun HomeTab(navController: NavHostController) {
+fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
     var id by remember { mutableStateOf("") }
     val dao = getTriggerDao()
-
     val triggerDetails by dao.getTriggerDetails().collectAsState(emptyList())
 
     LaunchedEffect(Unit) {
         id = getUserId().toString()
-
-
+        val data = FirebaseApiImpl.loadUserFromId(id)
+        if (data != null) {
+            viewmodel.setCurrentUserInfoData(data)
+        }
     }
 
     Scaffold(
@@ -72,7 +79,10 @@ fun HomeTab(navController: NavHostController) {
 
             LazyColumn {
                 items(triggerDetails.size) {
-                    TriggerCard(triggerDetails[it])
+                    TriggerCard(triggerDetails[it], dao)
+                    Spacer(
+                        Modifier.height(15.dp)
+                    )
                 }
             }
         }
@@ -80,34 +90,35 @@ fun HomeTab(navController: NavHostController) {
 }
 
 @Composable
-fun TriggerCard(details: TriggerDetails) {
+fun TriggerCard(details: TriggerDetails, dao: TriggerDetailsDao) {
+    val scope = rememberCoroutineScope()
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = 14.dp)
     ) {
-        Box(
+        Icon(
+            imageVector = Icons.Default.LocationOn,
+            contentDescription = "Location",
+            tint = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .background(
                     color = MaterialTheme.colorScheme.secondary,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .padding(15.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = "Location",
-                tint = MaterialTheme.colorScheme.surface
-            )
-        }
+        )
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.weight(3f)
         ) {
             Text(
                 details.location.name,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.surface
+                color = MaterialTheme.colorScheme.surface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Row {
                 Text(
@@ -118,11 +129,20 @@ fun TriggerCard(details: TriggerDetails) {
                             details.receiverDetails.userId
                     }",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.surface
+                    color = MaterialTheme.colorScheme.surface,
                 )
             }
         }
 
+        ToggleSwitch(
+            checked = details.isEnabled,
+            onCheckedChange = {
+                val newDetails = details.copy(isEnabled = it)
+                scope.launch {
+                    dao.insertTriggerDetails(newDetails)
+                }
+            },
+        )
     }
 }
 

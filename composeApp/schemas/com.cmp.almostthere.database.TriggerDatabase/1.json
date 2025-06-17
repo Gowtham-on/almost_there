@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2ec8f006752eb8ebafd574901a20182a",
+    "identityHash": "9d332f19ad02a7904dee485d636e7712",
     "entities": [
       {
         "tableName": "triggerDetails",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `triggerType` TEXT NOT NULL, `message` TEXT NOT NULL, `location` TEXT NOT NULL, `receiverDetails` TEXT NOT NULL, `isEnabled` INTEGER NOT NULL, PRIMARY KEY(`userId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` TEXT NOT NULL, `triggerType` TEXT NOT NULL, `message` TEXT NOT NULL, `location` TEXT NOT NULL, `receiverDetails` TEXT NOT NULL, `isEnabled` INTEGER NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "userId",
             "columnName": "userId",
@@ -46,16 +52,16 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
-            "userId"
+            "id"
           ]
         }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2ec8f006752eb8ebafd574901a20182a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9d332f19ad02a7904dee485d636e7712')"
     ]
   }
 }

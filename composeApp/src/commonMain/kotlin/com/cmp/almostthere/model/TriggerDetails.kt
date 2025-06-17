@@ -6,7 +6,8 @@ import com.cmp.almostthere.network.UserData
 
 @Entity(tableName = "triggerDetails")
 data class TriggerDetails(
-    @PrimaryKey(autoGenerate = false) val userId: String = "",
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val userId: String = "",
     val triggerType: TriggerType,
     val message: String,
     var location: MapDetails,

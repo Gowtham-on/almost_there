@@ -10,47 +10,54 @@ import androidx.navigation.compose.composable
 import com.cmp.almostthere.ui.MainScreen
 import com.cmp.almostthere.ui.form.TriggerForm
 import com.cmp.almostthere.ui.home.HomeTab
+import com.cmp.almostthere.ui.settings.SettingsTab
+import com.cmp.almostthere.ui.settings.ThemeChangeTab
+import com.cmp.almostthere.viewmodel.TriggerViewmodel
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController, viewmodel: TriggerViewmodel) {
     NavHost(navController = navController, startDestination = Routes.Main) {
-        destinations(navController)
+        destinations(navController, viewmodel)
     }
 }
 
 @Composable
 fun BottomNavigationNavGraph(
     navController: NavHostController,
+    viewmodel: TriggerViewmodel
 ) {
     NavHost(
         navController = navController,
         startDestination = Routes.Home,
     ) {
-        destinations(navController)
+        destinations(navController, viewmodel)
     }
 }
 
 
-fun NavGraphBuilder.destinations(navController: NavHostController) {
+fun NavGraphBuilder.destinations(navController: NavHostController, viewmodel: TriggerViewmodel) {
     composable<Routes.Splash> {
         Column {
             Text("splash")
         }
     }
     composable<Routes.Main> {
-        MainScreen(navController)
+        MainScreen(navController, viewmodel)
     }
     composable<Routes.Home> {
-        HomeTab(navController)
+        HomeTab(navController, viewmodel)
     }
     composable<Routes.Triggers> {
         Text("Triggers")
     }
     composable<Routes.Settings> {
-        Text("Settings")
+        SettingsTab(navController, viewmodel)
     }
     composable<Routes.TriggerForm> {
-        TriggerForm(navController)
+        TriggerForm(navController, viewmodel)
+    }
+    composable<Routes.ThemeChangeView> {
+        ThemeChangeTab(navController)
     }
 }
 

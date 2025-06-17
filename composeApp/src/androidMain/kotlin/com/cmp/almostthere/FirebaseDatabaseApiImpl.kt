@@ -37,10 +37,11 @@ class FirebaseDatabaseApiImpl : FirebaseDatabaseApi {
 
     override suspend fun mapUserIdWithToken(
         userId: String,
-        token: String
+        token: String,
+        name: String
     ) {
         val userMap = mapOf(
-            "name" to "",
+            "name" to name,
             "userId" to userId,
             "token" to token
         )

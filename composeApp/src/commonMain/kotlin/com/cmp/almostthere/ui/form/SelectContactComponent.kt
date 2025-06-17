@@ -1,6 +1,7 @@
 package com.cmp.almostthere.ui.form
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,54 +22,65 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.cmp.almostthere.components.SearchBar
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
-import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 import com.mohamedrejeb.calf.permissions.ExperimentalPermissionsApi
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SelectContactComponent() {
-
-    val viewmodel = koinKmpViewModel<TriggerViewmodel>()
+fun SelectContactComponent(viewmodel: TriggerViewmodel) {
 
     var contactId = remember { mutableStateOf("") }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        SearchBar(
-            text = contactId.value,
-            placeholder = "Enter the receiver's id",
-            contentDesc = "Enter",
-            showLeadingIcon = false,
-            modifier = Modifier.weight(2f),
-            keyBoardType = KeyboardType.Number
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            contactId.value = it
+            SearchBar(
+                text = contactId.value,
+                placeholder = "Enter the receiver's id",
+                contentDesc = "Enter",
+                showLeadingIcon = false,
+                modifier = Modifier.weight(2f),
+                keyBoardType = KeyboardType.Number
+            ) {
+                contactId.value = it
+            }
+            Spacer(
+                Modifier.width(15.dp)
+            )
+            Button(
+                onClick = {
+                    viewmodel.searchUser(contactId.value)
+                },
+                content = {
+                    Text(
+                        "Search",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.surface
+                    )
+                },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.inverseSurface,
+                ),
+                contentPadding = PaddingValues(vertical = 15.dp),
+            )
         }
-        Spacer(
-            Modifier.width(15.dp)
-        )
-        Button(
-            onClick = {
-                viewmodel.searchUser(contactId.value)
-            },
-            content = {
-                Text(
-                    "Search",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.surface
-                )
-            },
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.inverseSurface,
-            ),
-            contentPadding = PaddingValues(vertical = 15.dp),
-        )
+        if (viewmodel.showIncorrectId)
+            Text(
+                "Please enter the correct id",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.surface
+            )
+        else if (!viewmodel.showIncorrectId && viewmodel.receiverData.name.isNotEmpty())
+            Text(
+                "${viewmodel.receiverData.name} will be notified",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.surface
+            )
     }
 }
