@@ -28,7 +28,7 @@ import com.mohamedrejeb.calf.permissions.ExperimentalPermissionsApi
 @Composable
 fun SelectContactComponent(viewmodel: TriggerViewmodel) {
 
-    var contactId = remember { mutableStateOf("") }
+    var contactId = remember { mutableStateOf(viewmodel.receiverData.userId) }
 
     Column {
         Row(

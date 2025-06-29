@@ -41,14 +41,12 @@ fun SearchWithSuggestions(
     showLeadingIcon: Boolean,
     viewmodel: TriggerViewmodel
 ) {
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
+    var searchText by remember { mutableStateOf(TextFieldValue(viewmodel.destinationPlace.name)) }
     var showSuggestions by remember { mutableStateOf(false) }
     val debouncer = remember { Debouncer(debounceTimeMs = 500) }
     val scope = rememberCoroutineScope()
     var places by remember { mutableStateOf<List<MapDetails>>(emptyList()) }
     val focusRequester = remember { FocusRequester() }
-
-
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         SearchBar(

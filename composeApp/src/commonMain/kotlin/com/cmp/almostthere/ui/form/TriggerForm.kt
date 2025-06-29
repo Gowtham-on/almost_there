@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TriggerForm(navigationController: NavHostController, viewmodel: TriggerViewmodel) {
-    var messageText = remember { mutableStateOf("") }
+    var messageText = remember { mutableStateOf(viewmodel.message) }
 
     val dao = getTriggerDao()
     val scope = rememberCoroutineScope()
@@ -66,6 +66,7 @@ fun TriggerForm(navigationController: NavHostController, viewmodel: TriggerViewm
             "New Trigger",
             showLeftIcon = true,
             onLeftIconClick = {
+                viewmodel.clearAllData()
                 navigationController.popBackStack()
             },
             leftIcon = Icons.Default.Close,
@@ -97,7 +98,7 @@ fun TriggerForm(navigationController: NavHostController, viewmodel: TriggerViewm
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.surface,
             )
-            GetTriggerOptions {
+            GetTriggerOptions(viewmodel) {
                 viewmodel.setUserTriggerType(it)
             }
             Spacer(
@@ -133,6 +134,7 @@ fun TriggerForm(navigationController: NavHostController, viewmodel: TriggerViewm
                         val triggerDetails = viewmodel.getTriggerDetails()
                         scope.launch {
                             dao.insertTriggerDetails(triggerDetails)
+                            viewmodel.clearAllData()
                             navigationController.popBackStack()
                         }
                     } else {
@@ -183,9 +185,9 @@ fun TriggerForm(navigationController: NavHostController, viewmodel: TriggerViewm
 }
 
 @Composable
-fun GetTriggerOptions(triggerTypeSelection: (TriggerType) -> Unit = {}) {
+fun GetTriggerOptions(viewmodel: TriggerViewmodel, triggerTypeSelection: (TriggerType) -> Unit = {}) {
 
-    var selectedType = remember { mutableStateOf(TriggerType.NONE) }
+    var selectedType = remember { mutableStateOf(viewmodel.triggerType) }
 
     listOf<Pair<TriggerType, String>>(
         Pair(

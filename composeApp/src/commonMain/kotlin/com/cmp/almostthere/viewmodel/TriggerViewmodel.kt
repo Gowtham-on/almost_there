@@ -42,6 +42,9 @@ class TriggerViewmodel : ViewModel() {
     var showAlertDialog: Boolean by mutableStateOf(false)
     var showIncorrectId: Boolean by mutableStateOf(false)
 
+    var isEdit = false
+    var editData: TriggerDetails? = null
+
     fun setUserDestination(place: MapDetails) {
         destinationPlace = place
     }
@@ -71,6 +74,10 @@ class TriggerViewmodel : ViewModel() {
         }
     }
 
+    fun setUserReceiverData(data: UserData) {
+        receiverData = data
+    }
+
     fun clearReceiverData() {
         receiverData = UserData()
     }
@@ -83,14 +90,26 @@ class TriggerViewmodel : ViewModel() {
     }
 
     fun getTriggerDetails(): TriggerDetails {
-        val triggerDetails = TriggerDetails(
-            userId = userId,
-            triggerType = triggerType,
-            message = message,
-            location = destinationPlace,
-            receiverDetails = receiverData
-        )
-        return triggerDetails
+        if (isEdit && editData != null) {
+            val newData = editData?.copy(
+                userId = userId,
+                triggerType = triggerType,
+                message = message,
+                location = destinationPlace,
+                receiverDetails = receiverData
+            )
+            return newData!!
+        } else {
+            val triggerDetails = TriggerDetails(
+                userId = userId,
+                triggerType = triggerType,
+                message = message,
+                location = destinationPlace,
+                receiverDetails = receiverData
+            )
+            return triggerDetails
+        }
+
     }
 
     // Alert dialog texts
@@ -122,5 +141,18 @@ class TriggerViewmodel : ViewModel() {
 
     fun setSelectedTrigger(triggerDetails: TriggerDetails) {
         selectedTriggerDetail = triggerDetails
+    }
+
+    fun clearAllData() {
+        destinationPlace = MapDetails()
+        triggerType = TriggerType.NONE
+        message = ""
+        receiverData = UserData()
+        showAlertDialog = false
+        showIncorrectId = false
+        selectedTriggerDetail = null
+        isEdit = false
+        editData = null
+        userId = ""
     }
 }

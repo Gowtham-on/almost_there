@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import co.touchlab.kermit.Logger
 import com.cmp.almostthere.components.ActionIcon
 import com.cmp.almostthere.components.AppHeader
 import com.cmp.almostthere.components.SwipeableItemsWithAction
@@ -58,10 +57,6 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
     val dao = getTriggerDao()
     val triggerDetails by dao.getTriggerDetails().collectAsState(emptyList())
 
-    var isRevealed = remember {
-        mutableStateOf(false)
-    }
-
     LaunchedEffect(Unit) {
         id = getUserId().toString()
         val data = FirebaseApiImpl.loadUserFromId(id)
@@ -70,14 +65,9 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
         }
     }
 
-    LaunchedEffect(triggerDetails) {
-        Logger.d { " inside effect: inside trigger details" }
-        isRevealed.value = false
-    }
-
     Scaffold(
         floatingActionButton = {
-            FloatingButton(navController)
+            FloatingButton(navController, viewmodel)
         },
     ) { innerPadding ->
         Column {
@@ -85,6 +75,7 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
                 title = "Triggers List",
                 showRightIcon = true,
                 onRightIconClick = {
+                    viewmodel.isEdit = false
                     navController.navigate(Routes.TriggerForm)
                 },
                 modifier = Modifier.padding(horizontal = 15.dp),
@@ -97,12 +88,13 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
             LazyColumn {
                 items(triggerDetails.size) {
                     SwipeableItemsWithAction(
-                        triggerDetails[it].isRevealed,
                         actions = {
                             ActionViews(
                                 dao,
                                 triggerDetails[it],
-                                hide = { isRevealed.value = false })
+                                navController,
+                                viewmodel
+                            )
                         },
                         content = {
                             TriggerCard(
@@ -123,7 +115,12 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
 }
 
 @Composable
-fun ActionViews(dao: TriggerDetailsDao, details: TriggerDetails, hide: () -> Unit) {
+fun ActionViews(
+    dao: TriggerDetailsDao,
+    details: TriggerDetails,
+    navController: NavHostController,
+    viewmodel: TriggerViewmodel
+) {
     var scope = rememberCoroutineScope()
     ActionIcon(
         onClick = {
@@ -136,7 +133,15 @@ fun ActionViews(dao: TriggerDetailsDao, details: TriggerDetails, hide: () -> Uni
         modifier = Modifier.fillMaxHeight()
     )
     ActionIcon(
-        onClick = {},
+        onClick = {
+            viewmodel.isEdit = true
+            viewmodel.editData = details
+            viewmodel.setUserTriggerType(details.triggerType)
+            viewmodel.setUserDestination(details.location)
+            viewmodel.setUserMessage(details.message)
+            viewmodel.setUserReceiverData(details.receiverDetails)
+            navController.navigate(Routes.TriggerForm)
+        },
         backgroundColor = Color.Gray,
         icon = Icons.Default.Edit,
         modifier = Modifier.fillMaxHeight()
@@ -218,9 +223,10 @@ fun TriggerCard(
 }
 
 @Composable
-fun FloatingButton(navController: NavHostController) {
+fun FloatingButton(navController: NavHostController, viewmodel: TriggerViewmodel) {
     FloatingActionButton(
         onClick = {
+            viewmodel.isEdit = false
             navController.navigate(Routes.TriggerForm)
         },
         shape = RoundedCornerShape(100.dp),
