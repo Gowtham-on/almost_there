@@ -40,6 +40,7 @@ import com.cmp.almostthere.components.AppHeader
 import com.cmp.almostthere.components.ToggleSwitch
 import com.cmp.almostthere.navigation.Routes
 import com.cmp.almostthere.network.UserData
+import com.cmp.almostthere.utils.Theme
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
 import com.mohamedrejeb.calf.permissions.ExperimentalPermissionsApi
 import com.mohamedrejeb.calf.permissions.Permission
@@ -55,6 +56,12 @@ fun SettingsTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
 
     LaunchedEffect(viewmodel.currentUserData) {
         userData = viewmodel.currentUserData
+    }
+
+    val currentSelectedTheme = when(viewmodel.currentTheme) {
+        Theme.LIGHT -> "Light"
+        Theme.DARK -> "Dark"
+        Theme.SYSTEM -> "System"
     }
 
     Column(
@@ -96,7 +103,7 @@ fun SettingsTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
         ) {
             GetSettingsTextPair(
                 "Theme",
-                "Dark",
+                currentSelectedTheme,
                 modifier = Modifier.weight(1f)
             )
             Icon(
@@ -112,7 +119,7 @@ fun SettingsTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
         Spacer(
             Modifier.height(10.dp)
         )
-        GetBatteryOption()
+//        GetBatteryOption()
         if (showNameChangeDialog)
             ShowUserNameChangeDialog(userData, viewmodel) {
                 showNameChangeDialog = false
@@ -194,10 +201,10 @@ fun GetPermissionsOptions() {
                 backgroundLocationPermission.openAppSettings()
             }
         )
-        GetSettingsText(
-            "Auto-start on boot",
-            "Allow the app to start automatically when your device boots up"
-        )
+//        GetSettingsText(
+//            "Auto-start on boot",
+//            "Allow the app to start automatically when your device boots up"
+//        )
     }
 }
 

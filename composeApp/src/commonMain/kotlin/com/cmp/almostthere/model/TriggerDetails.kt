@@ -13,6 +13,7 @@ data class TriggerDetails(
     var location: MapDetails,
     var receiverDetails: UserData,
     var isEnabled: Boolean = true,
+    var isRevealed: Boolean = false,
 )
 
 enum class TriggerType {

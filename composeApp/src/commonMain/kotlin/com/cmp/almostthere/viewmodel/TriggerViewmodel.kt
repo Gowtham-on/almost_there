@@ -8,10 +8,18 @@ import com.cmp.almostthere.model.TriggerDetails
 import com.cmp.almostthere.model.TriggerType
 import com.cmp.almostthere.network.FirebaseApiImpl
 import com.cmp.almostthere.network.UserData
+import com.cmp.almostthere.utils.Theme
 import com.hoc081098.kmp.viewmodel.ViewModel
 import kotlinx.coroutines.launch
 
 class TriggerViewmodel : ViewModel() {
+
+    var currentTheme: Theme by mutableStateOf(Theme.SYSTEM)
+        private set
+
+    fun setTheme(theme: Theme) {
+        currentTheme = theme
+    }
 
     var currentUserData: UserData by mutableStateOf(UserData())
         private set
@@ -105,5 +113,14 @@ class TriggerViewmodel : ViewModel() {
         alertDialogDescription = description
         confirmButtonText = confirm
         dismissButtonText = dismiss
+    }
+
+
+    // Trigger details tab data
+    var selectedTriggerDetail: TriggerDetails? by mutableStateOf(null)
+        private set
+
+    fun setSelectedTrigger(triggerDetails: TriggerDetails) {
+        selectedTriggerDetail = triggerDetails
     }
 }

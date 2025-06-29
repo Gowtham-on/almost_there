@@ -127,8 +127,7 @@ fun TriggerForm(navigationController: NavHostController, viewmodel: TriggerViewm
                 onClick = {
                     if (viewmodel.destinationPlace.placeId.isNotEmpty() &&
                         viewmodel.triggerType != TriggerType.NONE &&
-                        viewmodel.receiverData.userId.isNotEmpty() &&
-                        viewmodel.message.isNotEmpty()
+                        viewmodel.receiverData.userId.isNotEmpty()
                     ) {
                         viewmodel.setUserMessage(messageText.value)
                         val triggerDetails = viewmodel.getTriggerDetails()

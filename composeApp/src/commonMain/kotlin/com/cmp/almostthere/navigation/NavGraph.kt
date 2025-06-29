@@ -12,6 +12,7 @@ import com.cmp.almostthere.ui.form.TriggerForm
 import com.cmp.almostthere.ui.home.HomeTab
 import com.cmp.almostthere.ui.settings.SettingsTab
 import com.cmp.almostthere.ui.settings.ThemeChangeTab
+import com.cmp.almostthere.ui.triggers.TriggersTab
 import com.cmp.almostthere.viewmodel.TriggerViewmodel
 
 @Composable
@@ -48,7 +49,7 @@ fun NavGraphBuilder.destinations(navController: NavHostController, viewmodel: Tr
         HomeTab(navController, viewmodel)
     }
     composable<Routes.Triggers> {
-        Text("Triggers")
+        TriggersTab(navController, viewmodel)
     }
     composable<Routes.Settings> {
         SettingsTab(navController, viewmodel)
@@ -57,7 +58,7 @@ fun NavGraphBuilder.destinations(navController: NavHostController, viewmodel: Tr
         TriggerForm(navController, viewmodel)
     }
     composable<Routes.ThemeChangeView> {
-        ThemeChangeTab(navController)
+        ThemeChangeTab(navController, viewmodel)
     }
 }
 

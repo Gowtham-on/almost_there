@@ -3,15 +3,19 @@ package com.cmp.almostthere.ui.home
 import almostthere.composeapp.generated.resources.Res
 import almostthere.composeapp.generated.resources.add_icon
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -31,8 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import co.touchlab.kermit.Logger
+import com.cmp.almostthere.components.ActionIcon
 import com.cmp.almostthere.components.AppHeader
+import com.cmp.almostthere.components.SwipeableItemsWithAction
 import com.cmp.almostthere.components.ToggleSwitch
 import com.cmp.almostthere.database.TriggerDetailsDao
 import com.cmp.almostthere.database.getTriggerDao
@@ -50,12 +58,21 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
     val dao = getTriggerDao()
     val triggerDetails by dao.getTriggerDetails().collectAsState(emptyList())
 
+    var isRevealed = remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(Unit) {
         id = getUserId().toString()
         val data = FirebaseApiImpl.loadUserFromId(id)
         if (data != null) {
             viewmodel.setCurrentUserInfoData(data)
         }
+    }
+
+    LaunchedEffect(triggerDetails) {
+        Logger.d { " inside effect: inside trigger details" }
+        isRevealed.value = false
     }
 
     Scaffold(
@@ -65,7 +82,7 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
     ) { innerPadding ->
         Column {
             AppHeader(
-                title = "ETA Triggers",
+                title = "Triggers List",
                 showRightIcon = true,
                 onRightIconClick = {
                     navController.navigate(Routes.TriggerForm)
@@ -79,7 +96,23 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
 
             LazyColumn {
                 items(triggerDetails.size) {
-                    TriggerCard(triggerDetails[it], dao)
+                    SwipeableItemsWithAction(
+                        triggerDetails[it].isRevealed,
+                        actions = {
+                            ActionViews(
+                                dao,
+                                triggerDetails[it],
+                                hide = { isRevealed.value = false })
+                        },
+                        content = {
+                            TriggerCard(
+                                triggerDetails[it],
+                                dao,
+                                navController,
+                                viewmodel
+                            )
+                        },
+                    )
                     Spacer(
                         Modifier.height(15.dp)
                     )
@@ -90,13 +123,51 @@ fun HomeTab(navController: NavHostController, viewmodel: TriggerViewmodel) {
 }
 
 @Composable
-fun TriggerCard(details: TriggerDetails, dao: TriggerDetailsDao) {
+fun ActionViews(dao: TriggerDetailsDao, details: TriggerDetails, hide: () -> Unit) {
+    var scope = rememberCoroutineScope()
+    ActionIcon(
+        onClick = {
+            scope.launch {
+                dao.deleteTriggerDetails(details)
+            }
+        },
+        backgroundColor = Color.Red,
+        icon = Icons.Default.Delete,
+        modifier = Modifier.fillMaxHeight()
+    )
+    ActionIcon(
+        onClick = {},
+        backgroundColor = Color.Gray,
+        icon = Icons.Default.Edit,
+        modifier = Modifier.fillMaxHeight()
+    )
+}
+
+@Composable
+fun TriggerCard(
+    details: TriggerDetails,
+    dao: TriggerDetailsDao,
+    navController: NavHostController,
+    viewmodel: TriggerViewmodel
+) {
     val scope = rememberCoroutineScope()
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 14.dp)
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 14.dp)
+            .clickable(onClick = {
+                viewmodel.setSelectedTrigger(details)
+                navController.navigate(Routes.Triggers) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            })
     ) {
         Icon(
             imageVector = Icons.Default.LocationOn,

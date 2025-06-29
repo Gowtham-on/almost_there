@@ -5,6 +5,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import com.cmp.almostthere.utils.Theme
+import com.cmp.almostthere.viewmodel.TriggerViewmodel
+import com.hoc081098.kmp.viewmodel.koin.compose.koinKmpViewModel
 
 private val DarkColorScheme = darkColorScheme(
     primary = black,
@@ -29,8 +32,16 @@ private val LightColorScheme = lightColorScheme(
 fun AlmostThereTheme(
     content: @Composable () -> Unit
 ) {
+    val triggerViewmodel = koinKmpViewModel<TriggerViewmodel>()
+
+    val themePreference = when (triggerViewmodel.currentTheme) {
+        Theme.LIGHT -> false
+        Theme.DARK -> true
+        Theme.SYSTEM -> isSystemInDarkTheme()
+    }
+
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme,
+        colorScheme = if (themePreference) DarkColorScheme else LightColorScheme,
         typography = Typography,
         content = content
     )
